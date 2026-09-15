@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trash2, RefreshCw, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '../common/Button';
+import { useTranslation } from '../../i18n';
 
 interface ImagePreviewProps {
   imageFile: File;
@@ -19,6 +20,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
   onAnalyze,
   isAnalyzing
 }) => {
+  const { t } = useTranslation();
   const sizeKb = (imageFile.size / 1024).toFixed(0);
 
   return (
@@ -35,7 +37,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
         <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-emerald-400 text-xs font-semibold border border-slate-700">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Image Ready
+            {t('scan.leafPreviewSubtitle')}
           </span>
         </div>
       </div>
@@ -51,19 +53,19 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={onChange}
-              className="p-2 rounded-xl text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center gap-1 text-xs font-semibold"
-              title="Replace image"
+              className="p-2 rounded-xl text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center gap-1 text-xs font-semibold cursor-pointer"
+              title={t('scan.clearImage')}
             >
               <RefreshCw className="w-4 h-4" />
-              <span className="hidden sm:inline">Change</span>
+              <span className="hidden sm:inline">{t('scan.clearImage')}</span>
             </button>
             <button
               onClick={onRemove}
-              className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-semibold"
-              title="Remove image"
+              className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-semibold cursor-pointer"
+              title={t('common.cancel')}
             >
               <Trash2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Remove</span>
+              <span className="hidden sm:inline">{t('common.cancel')}</span>
             </button>
           </div>
         </div>
@@ -77,7 +79,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           icon={<Sparkles className="w-5 h-5 text-emerald-200" />}
           className="w-full text-base font-bold shadow-md shadow-emerald-700/20"
         >
-          Diagnose Leaf with AI
+          {isAnalyzing ? t('scan.analyzingBtn') : t('scan.analyzeBtn')}
         </Button>
       </div>
     </div>

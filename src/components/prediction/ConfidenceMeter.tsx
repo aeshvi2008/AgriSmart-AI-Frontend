@@ -1,6 +1,7 @@
 import React from 'react';
 import { ConfidenceLevel } from '../../types/prediction';
 import { ConfidenceBadge } from '../common/ConfidenceBadge';
+import { useTranslation } from '../../i18n';
 
 interface ConfidenceMeterProps {
   confidence: number;
@@ -8,6 +9,7 @@ interface ConfidenceMeterProps {
 }
 
 export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, level }) => {
+  const { t } = useTranslation();
   const percentage = Math.round(confidence * 100);
 
   const getMeterGradient = () => {
@@ -20,7 +22,7 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, le
     <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs">
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-          AI Diagnostic Certainty
+          {t('common.confidence')}
         </span>
         <ConfidenceBadge level={level} percentage={confidence} size="sm" />
       </div>
@@ -33,9 +35,9 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({ confidence, le
       </div>
 
       <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1.5 font-medium">
-        <span>0% (Uncertain)</span>
-        <span>50% (Moderate)</span>
-        <span>100% (High Accuracy)</span>
+        <span>0% ({t('common.uncertain')})</span>
+        <span>50% ({t('common.mediumConfidence').split(' ')[0]})</span>
+        <span>100% ({t('common.highConfidence').split(' ')[0]})</span>
       </div>
     </div>
   );

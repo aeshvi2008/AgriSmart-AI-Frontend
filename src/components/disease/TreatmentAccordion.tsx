@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shovel, Leaf, FlaskConical, AlertTriangle } from 'lucide-react';
 import { TreatmentOptions } from '../../types/disease';
+import { useTranslation } from '../../i18n';
 
 interface TreatmentAccordionProps {
   treatment: TreatmentOptions;
@@ -9,11 +10,12 @@ interface TreatmentAccordionProps {
 
 export const TreatmentAccordion: React.FC<TreatmentAccordionProps> = ({ treatment, caution }) => {
   const [activeTab, setActiveTab] = useState<'cultural' | 'organic' | 'chemical'>('cultural');
+  const { t } = useTranslation();
 
   const tabs = [
     {
       id: 'cultural' as const,
-      label: 'Cultural & Hygiene',
+      label: t('disease.tabCultural'),
       icon: <Shovel className="w-4 h-4" />,
       items: treatment.cultural,
       accent: 'emerald',
@@ -21,7 +23,7 @@ export const TreatmentAccordion: React.FC<TreatmentAccordionProps> = ({ treatmen
     },
     {
       id: 'organic' as const,
-      label: 'Organic Solutions',
+      label: t('disease.tabOrganic'),
       icon: <Leaf className="w-4 h-4" />,
       items: treatment.organic,
       accent: 'teal',
@@ -29,11 +31,11 @@ export const TreatmentAccordion: React.FC<TreatmentAccordionProps> = ({ treatmen
     },
     {
       id: 'chemical' as const,
-      label: 'Chemical Controls',
+      label: t('disease.tabChemical'),
       icon: <FlaskConical className="w-4 h-4" />,
       items: treatment.chemical,
       accent: 'blue',
-      subtext: 'Synthetic fungicides & rescue treatments'
+      subtext: 'Targeted synthetic & protectant sprays'
     }
   ];
 
@@ -71,7 +73,7 @@ export const TreatmentAccordion: React.FC<TreatmentAccordionProps> = ({ treatmen
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <p className="text-xs font-semibold text-slate-500">{tab.subtext}</p>
                 <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                  {tab.items.length} Options
+                  {tab.items.length} {t('common.actions')}
                 </span>
               </div>
 
@@ -96,7 +98,7 @@ export const TreatmentAccordion: React.FC<TreatmentAccordionProps> = ({ treatmen
         <div className="mt-6 pt-5 border-t border-slate-100 flex items-start gap-3 p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs sm:text-sm text-amber-950">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <p>
-            <strong className="font-bold">Agronomist Disclaimer: </strong>
+            <strong className="font-bold">{t('disease.cautionLabel')}: </strong>
             {caution}
           </p>
         </div>

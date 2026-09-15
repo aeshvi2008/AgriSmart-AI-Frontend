@@ -1,6 +1,7 @@
 import React, { useRef, useState, DragEvent, ChangeEvent } from 'react';
 import { UploadCloud, Image as ImageIcon, ShieldCheck } from 'lucide-react';
 import { Button } from '../common/Button';
+import { useTranslation } from '../../i18n';
 
 interface ImageUploaderProps {
   onImageSelected: (file: File) => void;
@@ -14,6 +15,7 @@ const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, onError }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const { t } = useTranslation();
 
   const validateAndProcessFile = (file: File) => {
     if (!ACCEPTED_TYPES.includes(file.type.toLowerCase())) {
@@ -80,10 +82,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, o
         </div>
 
         <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1">
-          Drag & drop your leaf photo here
+          {t('scan.dragDropText')}
         </h3>
         <p className="text-sm text-slate-500 max-w-sm mb-4">
-          or browse files on your device (JPG, PNG, WebP up to 10MB)
+          {t('scan.orBrowseText')} ({t('scan.fileLimitHint')})
         </p>
 
         <Button
@@ -96,7 +98,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, o
             fileInputRef.current?.click();
           }}
         >
-          Choose from Gallery / Files
+          {t('scan.browseFilesBtn')}
         </Button>
       </div>
 
@@ -104,8 +106,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, o
       <div className="mt-4 p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-200/60 flex items-start gap-3 text-xs sm:text-sm text-emerald-900">
         <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
         <p>
-          <strong className="font-semibold text-emerald-950">Field Tip: </strong>
-          Hold the leaf flat in natural daylight without harsh shadows. Ensure the spots or discoloration fill most of the frame for the highest diagnostic accuracy.
+          <strong className="font-semibold text-emerald-950">{t('scan.notice')}: </strong>
+          {t('scan.cameraInstructions')}
         </p>
       </div>
     </div>

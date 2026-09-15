@@ -8,10 +8,12 @@ import { ImagePreview } from '../components/scan/ImagePreview';
 import { ScanProgress } from '../components/scan/ScanProgress';
 import { predictionService } from '../services/prediction';
 import { useToast } from '../context/ToastContext';
+import { useTranslation } from '../i18n';
 
 export const ScanPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t, getCropName } = useTranslation();
 
   const [activeMode, setActiveMode] = useState<'upload' | 'camera'>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -27,7 +29,7 @@ export const ScanPage: React.FC = () => {
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
-    showToast('Leaf image loaded successfully!', 'success');
+    showToast(t('scan.imageSelectedToast'), 'success');
   };
 
   const handleClearImage = () => {
@@ -55,7 +57,7 @@ export const ScanPage: React.FC = () => {
 
     try {
       const result = await predictionService.predict(selectedFile, selectedCropHint || undefined);
-      showToast('Diagnosis complete!', 'success');
+      showToast(t('scan.diagnosisCompleteToast'), 'success');
       navigate(`/result/${result.predictionId}`);
     } catch (err: any) {
       console.error('Scan prediction error', err);
@@ -67,8 +69,8 @@ export const ScanPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <PageHeader
-        title="Crop Health Scanner"
-        subtitle="Capture or upload a leaf photo to diagnose diseases with Model 1"
+        title={t('scan.pageTitle')}
+        subtitle={t('scan.pageSubtitle')}
         showBackButton
         backTo="/dashboard"
       />
@@ -78,7 +80,7 @@ export const ScanPage: React.FC = () => {
         <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <strong className="font-bold block">Notice:</strong>
+            <strong className="font-bold block">{t('scan.notice')}:</strong>
             <span>{errorMessage}</span>
           </div>
         </div>
@@ -97,7 +99,7 @@ export const ScanPage: React.FC = () => {
             <div className="flex items-center gap-2 mb-2.5">
               <Sprout className="w-4 h-4 text-emerald-600" />
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Crop Variety (Optional):
+                {t('scan.cropVarietyLabel')}
               </label>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -114,7 +116,7 @@ export const ScanPage: React.FC = () => {
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    {crop}
+                    {getCropName(crop)}
                   </button>
                 );
               })}
@@ -144,7 +146,7 @@ export const ScanPage: React.FC = () => {
               }`}
             >
               <UploadCloud className="w-4 h-4" />
-              <span>Upload Photo</span>
+              <span>{t('scan.tabUpload')}</span>
             </button>
             <button
               onClick={() => setActiveMode('camera')}
@@ -155,7 +157,7 @@ export const ScanPage: React.FC = () => {
               }`}
             >
               <Camera className="w-4 h-4" />
-              <span>Live Camera</span>
+              <span>{t('scan.tabCamera')}</span>
             </button>
           </div>
 

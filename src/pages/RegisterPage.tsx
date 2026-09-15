@@ -4,6 +4,7 @@ import { Sprout, UserPlus, AlertCircle, Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import { useToast } from '../context/ToastContext';
+import { useTranslation } from '../i18n';
 
 const AVAILABLE_CROPS = ['Tomato', 'Potato', 'Corn (Maize)', 'Apple', 'Grape', 'Pepper Bell', 'Rice', 'Wheat'];
 
@@ -11,6 +12,7 @@ export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -32,7 +34,7 @@ export const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) {
-      setErrorMessage('Please provide your name and email/mobile contact.');
+      setErrorMessage(t('auth.nameRequired'));
       return;
     }
 
@@ -47,7 +49,7 @@ export const RegisterPage: React.FC = () => {
         crops: selectedCrops,
         password
       });
-      showToast('Account created successfully!', 'success');
+      showToast(t('auth.registerSuccessToast'), 'success');
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
       setErrorMessage(err.message || 'Registration failed. Please try again.');
@@ -63,9 +65,9 @@ export const RegisterPage: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-emerald-600/20">
             <Sprout className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Create Grower Account</h2>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">{t('auth.registerTitle')}</h2>
           <p className="mt-1 text-xs sm:text-sm text-slate-500">
-            Join the agricultural community using AI-powered crop health monitoring
+            {t('auth.registerSubtitle')}
           </p>
         </div>
 
@@ -80,13 +82,13 @@ export const RegisterPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="name" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Farmer / Full Name
+                {t('auth.fullName')}
               </label>
               <input
                 id="name"
                 type="text"
                 required
-                placeholder="e.g. Ramesh Patel"
+                placeholder={t('auth.fullNamePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm outline-none"
@@ -95,13 +97,13 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Email / Mobile
+                {t('auth.emailOrPhone')}
               </label>
               <input
                 id="email"
                 type="text"
                 required
-                placeholder="e.g. ramesh@farm.com"
+                placeholder={t('auth.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm outline-none"
@@ -112,12 +114,12 @@ export const RegisterPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="farmName" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Farm or Plot Name
+                {t('auth.farmName')}
               </label>
               <input
                 id="farmName"
                 type="text"
-                placeholder="e.g. Green Valley Farm"
+                placeholder={t('auth.farmNamePlaceholder')}
                 value={farmName}
                 onChange={(e) => setFarmName(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm outline-none"
@@ -126,12 +128,12 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="location" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                District / Region
+                {t('auth.farmLocation')}
               </label>
               <input
                 id="location"
                 type="text"
-                placeholder="e.g. Nashik District"
+                placeholder={t('auth.farmLocationPlaceholder')}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm outline-none"
@@ -142,7 +144,7 @@ export const RegisterPage: React.FC = () => {
           {/* Crops multi-select */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Select Primary Crops Grown
+              {t('auth.cropsGrown')}
             </label>
             <div className="flex flex-wrap gap-2">
               {AVAILABLE_CROPS.map((crop) => {
@@ -168,12 +170,12 @@ export const RegisterPage: React.FC = () => {
 
           <div>
             <label htmlFor="reg-password" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Password
+              {t('auth.password')}
             </label>
             <input
               id="reg-password"
               type="password"
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm outline-none"
@@ -188,14 +190,14 @@ export const RegisterPage: React.FC = () => {
             icon={<UserPlus className="w-4 h-4" />}
             className="w-full font-bold mt-2"
           >
-            Create Farmer Account
+            {isSubmitting ? t('auth.registering') : t('auth.registerBtn')}
           </Button>
         </form>
 
         <div className="mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
-          <span>Already registered? </span>
+          <span>{t('auth.haveAccountPrompt')} </span>
           <Link to="/login" className="font-bold text-emerald-700 hover:text-emerald-800">
-            Sign in here
+            {t('auth.signInLink')}
           </Link>
         </div>
       </div>

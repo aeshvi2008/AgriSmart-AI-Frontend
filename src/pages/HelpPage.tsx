@@ -11,8 +11,10 @@ import { PageHeader } from '../components/common/PageHeader';
 import { Card } from '../components/common/Card';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common/Button';
+import { useTranslation } from '../i18n';
 
 export const HelpPage: React.FC = () => {
+  const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const toggleFaq = (index: number) => {
@@ -64,8 +66,8 @@ export const HelpPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <PageHeader
-        title="Farmer Help & Field Guide"
-        subtitle="Practical tips to get the most accurate disease diagnoses for your crops"
+        title={t('help.pageTitle')}
+        subtitle={t('help.pageSubtitle')}
         showBackButton
         backTo="/dashboard"
       />
@@ -75,11 +77,11 @@ export const HelpPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-4">
           <Camera className="w-5 h-5 text-emerald-600" />
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            How to Take a Winning Leaf Photo
+            {t('help.bestPracticesTitle')}
           </h2>
         </div>
         <p className="text-sm text-slate-600 mb-6">
-          High-quality photos ensure Model 1 accurately pinpoints the disease. Follow these simple field rules:
+          {t('help.bestPracticesSubtitle')}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,7 +91,7 @@ export const HelpPage: React.FC = () => {
                 <div className="flex items-start gap-2.5 text-emerald-900 bg-emerald-50/80 p-3 rounded-xl border border-emerald-200/60">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold block text-emerald-950">DO:</strong>
+                    <strong className="font-bold block text-emerald-950">{t('help.doLabel')}:</strong>
                     <span>{item.do}</span>
                   </div>
                 </div>
@@ -97,7 +99,7 @@ export const HelpPage: React.FC = () => {
                 <div className="flex items-start gap-2.5 text-rose-900 bg-rose-50/80 p-3 rounded-xl border border-rose-200/60">
                   <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold block text-rose-950">DON'T:</strong>
+                    <strong className="font-bold block text-rose-950">{t('help.dontLabel')}:</strong>
                     <span>{item.dont}</span>
                   </div>
                 </div>
@@ -112,14 +114,14 @@ export const HelpPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-4">
           <ShieldCheck className="w-5 h-5 text-emerald-600" />
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Understanding AI Confidence Levels
+            {t('common.confidence')}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block mb-1">
-              High Confidence (&gt; 80%)
+              {t('common.highConfidence')} (&gt; 80%)
             </span>
             <p className="text-xs text-emerald-900 leading-relaxed">
               Clear diagnostic pattern detected. Immediate action steps and recommended treatments are highly reliable.
@@ -128,7 +130,7 @@ export const HelpPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-700 block mb-1">
-              Moderate (60% - 80%)
+              {t('common.mediumConfidence')} (60% - 80%)
             </span>
             <p className="text-xs text-amber-900 leading-relaxed">
               Symptoms match known pathogen, but mild symptoms or lighting may obscure details. Confirm with symptoms guide.
@@ -137,7 +139,7 @@ export const HelpPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200">
             <span className="text-xs font-bold uppercase tracking-wider text-rose-700 block mb-1">
-              Low Confidence (&lt; 60%)
+              {t('common.lowConfidence')} (&lt; 60%)
             </span>
             <p className="text-xs text-rose-900 leading-relaxed">
               Uncertain result. Do not spray chemicals. Retake photo in natural daylight with sharp focus.
@@ -151,7 +153,7 @@ export const HelpPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-4">
           <HelpCircle className="w-5 h-5 text-emerald-600" />
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Frequently Asked Questions
+            {t('help.faqTitle')}
           </h2>
         </div>
 
@@ -188,9 +190,9 @@ export const HelpPage: React.FC = () => {
       {/* Ready to scan prompt */}
       <div className="p-6 rounded-3xl bg-emerald-600 text-white flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
         <div>
-          <h3 className="text-lg font-bold">Ready to check your crops?</h3>
+          <h3 className="text-lg font-bold">{t('help.readyToDiagnose')}</h3>
           <p className="text-xs sm:text-sm text-emerald-100">
-            Take a leaf photo now and test Model 1 disease diagnosis.
+            {t('help.needFurtherAssistance')}
           </p>
         </div>
         <Link to="/scan">
@@ -200,7 +202,7 @@ export const HelpPage: React.FC = () => {
             icon={<Camera className="w-4 h-4 text-emerald-800" />}
             className="bg-white hover:bg-emerald-50 text-emerald-900 font-bold"
           >
-            Scan a Leaf Now
+            {t('help.startDiagnosingBtn')}
           </Button>
         </Link>
       </div>

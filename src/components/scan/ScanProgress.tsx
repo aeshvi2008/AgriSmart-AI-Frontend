@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Scan, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 interface ScanProgressProps {
   previewUrl: string;
 }
 
-const STAGES = [
-  { label: 'Normalizing image color & focus...', duration: 500 },
-  { label: 'Scanning leaf texture & lesion patterns...', duration: 600 },
-  { label: 'Running EfficientNet-B2 Model 1 classification...', duration: 700 },
-  { label: 'Retrieving agronomy treatment recommendations...', duration: 400 }
-];
-
 export const ScanProgress: React.FC<ScanProgressProps> = ({ previewUrl }) => {
+  const { t } = useTranslation();
   const [currentStageIdx, setCurrentStageIdx] = useState(0);
   const [progressPercent, setProgressPercent] = useState(15);
+
+  const STAGES = [
+    { label: t('scan.analyzingMessage'), duration: 500 },
+    { label: t('scan.analyzingNotice'), duration: 600 },
+    { label: 'EfficientNet-B2 Model 1 Inference...', duration: 700 },
+    { label: t('result.recommendedActionsTitle'), duration: 400 }
+  ];
 
   useEffect(() => {
     let accumulatedTime = 0;
@@ -60,10 +62,10 @@ export const ScanProgress: React.FC<ScanProgressProps> = ({ previewUrl }) => {
       {/* Headline */}
       <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-1 flex items-center justify-center gap-2">
         <Sparkles className="w-5 h-5 text-emerald-600" />
-        Analyzing Your Crop...
+        {t('scan.analyzingBtn')}
       </h3>
       <p className="text-xs sm:text-sm text-slate-500 mb-6">
-        Model 1 is classifying symptoms against 28 known agricultural conditions
+        {t('scan.analyzingNotice')}
       </p>
 
       {/* Progress Bar */}

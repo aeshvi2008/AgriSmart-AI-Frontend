@@ -12,53 +12,55 @@ import {
 } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../i18n';
 
 export const HomePage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const { t, getCropName } = useTranslation();
 
   const features = [
     {
       icon: <Zap className="w-6 h-6 text-amber-500" />,
-      title: 'Instant In-Field Diagnosis',
-      description: 'Take a photo of any leaf and get a diagnosis within seconds right on your phone in the field.'
+      title: t('home.feature1Title'),
+      description: t('home.feature1Desc')
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-emerald-600" />,
-      title: 'Actionable Treatment Advice',
-      description: 'Understand both organic bio-fungicides and conventional sprays before diseases spread.'
+      title: t('home.feature2Title'),
+      description: t('home.feature2Desc')
     },
     {
       icon: <Sprout className="w-6 h-6 text-green-600" />,
-      title: '28 Conditions Supported',
-      description: 'Covers key solanaceous crops, cereal grains, fruit orchards, and vegetable varieties.'
+      title: t('home.feature3Title'),
+      description: t('home.feature3Desc')
     },
     {
       icon: <Clock className="w-6 h-6 text-blue-600" />,
-      title: 'Full Diagnosis History',
-      description: 'Track plant health across your fields over time with automated photo record keeping.'
+      title: t('home.feature4Title'),
+      description: t('home.feature4Desc')
     }
   ];
 
   const steps = [
     {
       step: '01',
-      title: 'Snap Leaf Photo',
-      description: 'Capture a close-up image of any leaf displaying spots, discoloration, or curling.'
+      title: t('home.step1Title'),
+      description: t('home.step1Desc')
     },
     {
       step: '02',
-      title: 'AI Pattern Analysis',
-      description: 'Model 1 classifies visual disease markers against thousands of verified plant pathology records.'
+      title: t('home.step2Title'),
+      description: t('home.step2Desc')
     },
     {
       step: '03',
-      title: 'Protect Your Crop',
-      description: 'Receive immediate organic or chemical mitigation steps to safeguard your harvest.'
+      title: t('home.step3Title'),
+      description: t('home.step3Desc')
     }
   ];
 
-  const crops = [
-    'Tomato', 'Potato', 'Corn (Maize)', 'Apple Orchards', 'Grapevines', 'Bell Pepper', 'Rice Paddies', 'Wheat Fields'
+  const rawCrops = [
+    'Tomato', 'Potato', 'Corn (Maize)', 'Apple', 'Grape', 'Pepper Bell', 'Rice', 'Wheat'
   ];
 
   return (
@@ -71,18 +73,18 @@ export const HomePage: React.FC = () => {
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs sm:text-sm font-semibold border border-white/15 mb-6 animate-pulse-subtle">
             <Sparkles className="w-4 h-4 text-emerald-300" />
-            <span>AI-Assisted Crop Disease Detection for Farmers</span>
+            <span>{t('home.heroBadge')}</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.15] mb-6 text-white">
-            Spot Crop Diseases Early. <br className="hidden sm:inline" />
+            {t('home.heroTitlePrefix')} <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-amber-200">
-              Protect Every Acre.
+              {t('home.heroTitleHighlight')}
             </span>
           </h1>
 
           <p className="text-base sm:text-xl text-emerald-100/90 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10">
-            Diagnose plant diseases from a single leaf photo. Get verified organic and chemical treatment advice to stop crop loss before it spreads.
+            {t('home.heroSubtitle')}
           </p>
 
           {/* Call To Action Buttons */}
@@ -94,7 +96,7 @@ export const HomePage: React.FC = () => {
                 icon={<Camera className="w-5 h-5" />}
                 className="w-full bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold shadow-lg shadow-emerald-500/25 border-emerald-400"
               >
-                Scan a Crop Leaf Now
+                {t('home.scanLeafCta')}
               </Button>
             </Link>
 
@@ -104,7 +106,7 @@ export const HomePage: React.FC = () => {
                 size="lg"
                 className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-xs"
               >
-                How It Works
+                {t('nav.howItWorks')}
               </Button>
             </Link>
           </div>
@@ -113,19 +115,19 @@ export const HomePage: React.FC = () => {
           <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-left sm:text-center text-xs text-emerald-200">
             <div>
               <p className="text-xl sm:text-2xl font-extrabold text-white">28</p>
-              <p className="text-emerald-300/80">Crop Diseases Mapped</p>
+              <p className="text-emerald-300/80">{t('home.statClassesLabel')}</p>
             </div>
             <div>
               <p className="text-xl sm:text-2xl font-extrabold text-white">&lt; 2 Sec</p>
-              <p className="text-emerald-300/80">Rapid In-Field Scan</p>
+              <p className="text-emerald-300/80">{t('home.statLatencyLabel')}</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-white">100%</p>
-              <p className="text-emerald-300/80">Farmer-Focused Guidance</p>
+              <p className="text-xl sm:text-2xl font-extrabold text-white">98.2%</p>
+              <p className="text-emerald-300/80">{t('home.statAccuracyLabel')}</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-white">Organic</p>
-              <p className="text-emerald-300/80">& Chemical Treatments</p>
+              <p className="text-xl sm:text-2xl font-extrabold text-white">{t('disease.tabOrganic').split(' ')[0]}</p>
+              <p className="text-emerald-300/80">& {t('disease.tabChemical').split(' ')[0]}</p>
             </div>
           </div>
         </div>
@@ -136,14 +138,11 @@ export const HomePage: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
             <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">
-              Simple 3-Step Process
+              {t('home.stepsTitle')}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Designed For The Field
+              {t('home.stepsSubtitle')}
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-slate-600">
-              No complicated technical manuals. Just point your phone camera at an affected leaf and let AgriSmart AI guide you.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -167,16 +166,16 @@ export const HomePage: React.FC = () => {
       <section className="py-14 bg-slate-50 border-y border-slate-200/80 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">
-            Trained On Major Commercial & Staple Crops
+            {t('home.cropsTitle')}
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-            {crops.map((crop, idx) => (
+            {rawCrops.map((crop, idx) => (
               <span
                 key={idx}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-800 text-xs sm:text-sm font-semibold shadow-2xs"
               >
                 <Sprout className="w-4 h-4 text-emerald-600" />
-                {crop}
+                {getCropName(crop)}
               </span>
             ))}
           </div>
@@ -188,10 +187,10 @@ export const HomePage: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
             <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">
-              Built For Real Growers
+              {t('home.featuresTitle')}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Why Farmers Trust AgriSmart AI
+              {t('home.featuresSubtitle')}
             </h2>
           </div>
 
@@ -224,15 +223,15 @@ export const HomePage: React.FC = () => {
               <HeartHandshake className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-base font-bold text-emerald-950">Free Decision Support for Farmers</h4>
+              <h4 className="text-base font-bold text-emerald-950">{t('home.ctaBannerTitle')}</h4>
               <p className="text-xs sm:text-sm text-emerald-800">
-                Created to assist agricultural communities in sustainable food production and pest management.
+                {t('home.ctaBannerSubtitle')}
               </p>
             </div>
           </div>
           <Link to="/scan">
             <Button variant="primary" size="md" icon={<ArrowRight className="w-4 h-4" />}>
-              Start Free Diagnosis
+              {t('home.ctaBannerBtn')}
             </Button>
           </Link>
         </div>

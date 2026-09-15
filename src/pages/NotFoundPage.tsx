@@ -2,8 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sprout, LayoutDashboard, Camera } from 'lucide-react';
 import { Button } from '../components/common/Button';
+import { useTranslation } from '../i18n';
 
 export const NotFoundPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-4 py-16 text-center">
       <div className="max-w-md mx-auto">
@@ -12,13 +15,13 @@ export const NotFoundPage: React.FC = () => {
         </div>
 
         <span className="text-xs font-black text-emerald-600 tracking-widest uppercase mb-2 block">
-          Error 404
+          {t('notFound.errorCode')}
         </span>
         <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
-          Field Path Not Found
+          {t('notFound.title')}
         </h1>
         <p className="text-sm text-slate-500 mb-8 leading-relaxed">
-          The page or crop record you are looking for might have moved, been deleted, or never existed in the field.
+          {t('notFound.description')}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -29,7 +32,7 @@ export const NotFoundPage: React.FC = () => {
               icon={<LayoutDashboard className="w-4 h-4" />}
               className="w-full font-bold"
             >
-              Go to Dashboard
+              {t('notFound.dashboardBtn')}
             </Button>
           </Link>
           <Link to="/scan" className="w-full sm:w-auto">
@@ -39,7 +42,7 @@ export const NotFoundPage: React.FC = () => {
               icon={<Camera className="w-4 h-4" />}
               className="w-full"
             >
-              Scan a Leaf
+              {t('notFound.scanBtn')}
             </Button>
           </Link>
         </div>

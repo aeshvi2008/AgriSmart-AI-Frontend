@@ -4,12 +4,14 @@ import { Sprout, LogIn, Sparkles, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import { useToast } from '../context/ToastContext';
+import { useTranslation } from '../i18n';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const from = (location.state as any)?.from?.pathname || '/dashboard';
 
@@ -21,7 +23,7 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      setErrorMessage('Please enter your email or phone number.');
+      setErrorMessage(t('auth.emailRequired'));
       return;
     }
 
@@ -29,7 +31,7 @@ export const LoginPage: React.FC = () => {
     setErrorMessage(null);
     try {
       await login({ email, password });
-      showToast('Welcome back to AgriSmart AI!', 'success');
+      showToast(t('auth.loginSuccessToast'), 'success');
       navigate(from, { replace: true });
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to login. Please try again.');
@@ -43,7 +45,7 @@ export const LoginPage: React.FC = () => {
     setErrorMessage(null);
     try {
       await login({ email: 'ramesh.farmer@agrismart.ai' });
-      showToast('Logged in as Farmer Ramesh Patel', 'success');
+      showToast(t('auth.demoSuccessToast'), 'success');
       navigate(from, { replace: true });
     } catch (err: any) {
       setErrorMessage(err.message || 'Demo login failed.');
@@ -60,16 +62,16 @@ export const LoginPage: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-emerald-600/20">
             <Sprout className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Farmer Sign In</h2>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">{t('auth.signInTitle')}</h2>
           <p className="mt-1 text-xs sm:text-sm text-slate-500">
-            Access your crop scan records and diagnosis history
+            {t('auth.signInSubtitle')}
           </p>
         </div>
 
         {/* 1-Click Demo Login Banner */}
         <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-center">
           <p className="text-xs font-semibold text-emerald-900 mb-2">
-            Evaluating the application? Try with a single click:
+            {t('auth.demoBanner')}
           </p>
           <Button
             type="button"
@@ -80,7 +82,7 @@ export const LoginPage: React.FC = () => {
             icon={<Sparkles className="w-4 h-4 text-emerald-600" />}
             className="w-full font-bold bg-white hover:bg-emerald-100/50 text-emerald-800 border-emerald-300"
           >
-            1-Click Demo Farmer Login
+            {t('auth.demoLoginBtn')}
           </Button>
         </div>
 
@@ -96,13 +98,13 @@ export const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Email or Mobile Number
+              {t('auth.emailOrPhone')}
             </label>
             <input
               id="email"
               type="text"
               required
-              placeholder="e.g. ramesh@farm.com"
+              placeholder={t('auth.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition-colors outline-none"
@@ -112,14 +114,14 @@ export const LoginPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label htmlFor="password" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Password
+                {t('auth.password')}
               </label>
               <span className="text-[11px] text-slate-400">Mock demo mode</span>
             </div>
             <input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition-colors outline-none"
@@ -134,15 +136,15 @@ export const LoginPage: React.FC = () => {
             icon={<LogIn className="w-4 h-4" />}
             className="w-full font-bold mt-2"
           >
-            Sign In to Farm Dashboard
+            {isSubmitting ? t('auth.signingIn') : t('auth.signInBtn')}
           </Button>
         </form>
 
         {/* Footer info */}
         <div className="mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
-          <span>Don't have an account yet? </span>
+          <span>{t('auth.noAccountPrompt')} </span>
           <Link to="/register" className="font-bold text-emerald-700 hover:text-emerald-800">
-            Register as a new grower
+            {t('auth.signUpLink')}
           </Link>
         </div>
       </div>

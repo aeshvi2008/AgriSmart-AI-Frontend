@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { I18nProvider } from './i18n';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/layout/Navbar';
@@ -26,10 +27,11 @@ import { NotFoundPage } from './pages/NotFoundPage';
 export function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
-            <Navbar />
+      <I18nProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+              <Navbar />
 
             <main className="flex-1">
               <Routes>
@@ -104,7 +106,8 @@ export function App() {
           </div>
         </ToastProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </I18nProvider>
+  </BrowserRouter>
   );
 }
 

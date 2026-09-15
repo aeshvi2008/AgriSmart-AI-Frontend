@@ -2,10 +2,12 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Camera, History, BookOpen, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from '../../i18n';
 
 export const MobileNavigation: React.FC = () => {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => {
     if (path === '/dashboard' && location.pathname === '/') return false;
@@ -25,7 +27,7 @@ export const MobileNavigation: React.FC = () => {
           }`}
         >
           <LayoutDashboard className="w-5 h-5 mb-0.5" />
-          <span>Home</span>
+          <span>{t('nav.home')}</span>
         </Link>
 
         {/* History */}
@@ -38,7 +40,7 @@ export const MobileNavigation: React.FC = () => {
           }`}
         >
           <History className="w-5 h-5 mb-0.5" />
-          <span>History</span>
+          <span>{t('nav.scanHistory').split(' ')[0]}</span>
         </Link>
 
         {/* Floating Scan Button (Center Action) */}
@@ -46,11 +48,13 @@ export const MobileNavigation: React.FC = () => {
           <Link
             to="/scan"
             className="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/40 hover:scale-105 active:scale-95 transition-all border-4 border-white"
-            aria-label="Scan crop leaf"
+            aria-label={t('nav.scanLeaf')}
           >
             <Camera className="w-6 h-6" />
           </Link>
-          <span className="text-[11px] font-bold text-emerald-700 mt-1">Scan</span>
+          <span className="text-[11px] font-bold text-emerald-700 mt-1">
+            {t('nav.scanLeaf').split(' ')[0]}
+          </span>
         </div>
 
         {/* Disease Catalog */}
@@ -63,7 +67,7 @@ export const MobileNavigation: React.FC = () => {
           }`}
         >
           <BookOpen className="w-5 h-5 mb-0.5" />
-          <span>Guide</span>
+          <span>{t('nav.diseaseGuide').split(' ')[0]}</span>
         </Link>
 
         {/* Help */}
@@ -76,7 +80,7 @@ export const MobileNavigation: React.FC = () => {
           }`}
         >
           <HelpCircle className="w-5 h-5 mb-0.5" />
-          <span>Help</span>
+          <span>{t('nav.helpGuide').split(' ')[0]}</span>
         </Link>
       </div>
     </nav>

@@ -19,9 +19,11 @@ import { ConfidenceBadge } from '../components/common/ConfidenceBadge';
 import { LoadingState } from '../components/common/LoadingState';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../i18n';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { t, getDisease } = useTranslation();
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -42,7 +44,7 @@ export const DashboardPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <LoadingState message="Loading your farm metrics..." />
+        <LoadingState message={t('common.loading')} />
       </div>
     );
   }
@@ -65,10 +67,10 @@ export const DashboardPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest block mb-1">
-            Grower Overview
+            {t('dashboard.growerOverview')}
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Welcome back, {user?.name || 'Farmer'}
+            {t('dashboard.welcomeBack')}, {user?.name || t('nav.farmer')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             {user?.farmName || 'Family Homestead Farm'} • {user?.location || 'Registered Farm'}
@@ -82,7 +84,7 @@ export const DashboardPage: React.FC = () => {
             icon={<Camera className="w-4 h-4" />}
             className="shadow-sm font-bold"
           >
-            New Leaf Scan
+            {t('dashboard.newScanBtn')}
           </Button>
         </Link>
       </div>
@@ -95,30 +97,30 @@ export const DashboardPage: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         <StatCard
-          title="Total Scans"
+          title={t('dashboard.statTotalScans')}
           value={metrics.totalScans}
-          subtitle={`${metrics.scansThisWeek} scans this week`}
+          subtitle={`${metrics.scansThisWeek} ${t('dashboard.statScansThisWeek')}`}
           icon={<Activity className="w-5 h-5" />}
           accent="blue"
         />
         <StatCard
-          title="Healthy Crops"
+          title={t('dashboard.statHealthyCrops')}
           value={metrics.healthyCropsCount}
-          subtitle={`${metrics.healthyPercentage}% overall healthy`}
+          subtitle={`${metrics.healthyPercentage}% ${t('dashboard.statOfAllScans')}`}
           icon={<CheckCircle2 className="w-5 h-5" />}
           accent="emerald"
         />
         <StatCard
-          title="Diseases Detected"
+          title={t('dashboard.statDiseasesIdentified')}
           value={metrics.diseasedCropsCount}
-          subtitle="Treated & monitored"
+          subtitle={t('dashboard.statActiveAttention')}
           icon={<AlertTriangle className="w-5 h-5" />}
           accent="amber"
         />
         <StatCard
-          title="Active Crops"
+          title={t('common.crop')}
           value={data?.commonCrops.length || 1}
-          subtitle="Varieties monitored"
+          subtitle={t('dashboard.statUncertainScans')}
           icon={<Sprout className="w-5 h-5" />}
           accent="purple"
         />
@@ -129,68 +131,71 @@ export const DashboardPage: React.FC = () => {
         {/* Latest Prediction Card */}
         <div className="lg:col-span-1">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">Latest Detection</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">{t('dashboard.latestScanTitle')}</h2>
             {latestPrediction && (
               <Link
                 to={`/result/${latestPrediction.predictionId}`}
                 className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
               >
-                View Full
+                {t('dashboard.viewReport')}
               </Link>
             )}
           </div>
 
-          {latestPrediction ? (
-            <Card hoverable className="overflow-hidden p-0 border-emerald-200">
-              <div className="relative aspect-16/10 bg-slate-900 overflow-hidden">
-                <img
-                  src={latestPrediction.imageUrl}
-                  alt={latestPrediction.disease.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 left-3">
-                  <ConfidenceBadge
-                    level={latestPrediction.confidenceLevel}
-                    percentage={latestPrediction.confidence}
-                    size="sm"
+          {latestPrediction ? (() => {
+            const localized = getDisease(latestPrediction.disease.classId || latestPrediction.disease.name);
+            return (
+              <Card hoverable className="overflow-hidden p-0 border-emerald-200">
+                <div className="relative aspect-16/10 bg-slate-900 overflow-hidden">
+                  <img
+                    src={latestPrediction.imageUrl}
+                    alt={latestPrediction.disease.name}
+                    className="w-full h-full object-cover"
                   />
+                  <div className="absolute top-3 left-3">
+                    <ConfidenceBadge
+                      level={latestPrediction.confidenceLevel}
+                      percentage={latestPrediction.confidence}
+                      size="sm"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="p-5">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  <span>{latestPrediction.crop}</span>
-                  <span>•</span>
-                  <span>{new Date(latestPrediction.createdAt).toLocaleDateString()}</span>
-                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    <span>{latestPrediction.crop}</span>
+                    <span>•</span>
+                    <span>{new Date(latestPrediction.createdAt).toLocaleDateString()}</span>
+                  </div>
 
-                <h3 className="text-lg font-bold text-slate-900 mb-1">
-                  {latestPrediction.disease.name}
-                </h3>
-                {latestPrediction.disease.scientificName && (
-                  <p className="text-xs italic text-slate-400 font-serif mb-3">
-                    {latestPrediction.disease.scientificName}
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">
+                    {localized?.displayName || latestPrediction.disease.name}
+                  </h3>
+                  {latestPrediction.disease.scientificName && (
+                    <p className="text-xs italic text-slate-400 font-serif mb-3">
+                      {latestPrediction.disease.scientificName}
+                    </p>
+                  )}
+
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
+                    {latestPrediction.explanation}
                   </p>
-                )}
 
-                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
-                  {latestPrediction.explanation}
-                </p>
-
-                <Link
-                  to={`/result/${latestPrediction.predictionId}`}
-                  className="inline-flex items-center justify-between w-full pt-3 border-t border-slate-100 text-xs font-bold text-emerald-700 hover:text-emerald-800"
-                >
-                  <span>Read Recommended Action</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </Card>
-          ) : (
+                  <Link
+                    to={`/result/${latestPrediction.predictionId}`}
+                    className="inline-flex items-center justify-between w-full pt-3 border-t border-slate-100 text-xs font-bold text-emerald-700 hover:text-emerald-800"
+                  >
+                    <span>{t('dashboard.viewReport')}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </Card>
+            );
+          })() : (
             <EmptyState
-              title="No Scans Yet"
-              message="Diagnose your first leaf to see latest results here."
-              actionLabel="Scan Leaf"
+              title={t('dashboard.noScansYet')}
+              message={t('dashboard.noScansDesc')}
+              actionLabel={t('dashboard.firstScanBtn')}
               onAction={() => {}}
             />
           )}
@@ -199,71 +204,74 @@ export const DashboardPage: React.FC = () => {
         {/* Recent Scan History List */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">Recent Crop Scans</h2>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">{t('dashboard.recentScansTitle')}</h2>
             <Link
               to="/history"
               className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
             >
-              <span>View All History</span>
+              <span>{t('dashboard.viewAllLink')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {recentScans.length > 0 ? (
             <div className="space-y-3">
-              {recentScans.map((scan) => (
-                <Link
-                  key={scan.id}
-                  to={`/result/${scan.predictionId}`}
-                  className="block group"
-                >
-                  <Card
-                    hoverable
-                    padding="sm"
-                    className="flex items-center justify-between gap-4 group-hover:border-emerald-300"
+              {recentScans.map((scan) => {
+                const localizedScan = getDisease(scan.classId || scan.diseaseName);
+                return (
+                  <Link
+                    key={scan.id}
+                    to={`/result/${scan.predictionId}`}
+                    className="block group"
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="w-14 h-14 rounded-xl bg-slate-900 overflow-hidden shrink-0 border border-slate-200">
-                        <img
-                          src={scan.imageUrl}
-                          alt={scan.crop}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">
-                            {scan.crop}
-                          </span>
-                          <span className="text-[11px] text-slate-400">
-                            {new Date(scan.createdAt).toLocaleDateString()}
-                          </span>
+                    <Card
+                      hoverable
+                      padding="sm"
+                      className="flex items-center justify-between gap-4 group-hover:border-emerald-300"
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-14 h-14 rounded-xl bg-slate-900 overflow-hidden shrink-0 border border-slate-200">
+                          <img
+                            src={scan.imageUrl}
+                            alt={scan.crop}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-                        <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
-                          {scan.diseaseName}
-                        </h4>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">
+                              {scan.crop}
+                            </span>
+                            <span className="text-[11px] text-slate-400">
+                              {new Date(scan.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
+                            {localizedScan?.displayName || scan.diseaseName}
+                          </h4>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                      <ConfidenceBadge
-                        level={scan.confidenceLevel}
-                        percentage={scan.confidence}
-                        size="sm"
-                        showLabel={false}
-                      />
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <ConfidenceBadge
+                          level={scan.confidenceLevel}
+                          percentage={scan.confidence}
+                          size="sm"
+                          showLabel={false}
+                        />
+                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <Card className="p-8 text-center">
               <EmptyState
-                title="No Scan History Found"
-                message="Your recent disease diagnoses will be tracked here."
-                actionLabel="Scan Your First Leaf"
+                title={t('dashboard.noScansYet')}
+                message={t('dashboard.noScansDesc')}
+                actionLabel={t('dashboard.firstScanBtn')}
                 actionIcon={<Plus className="w-4 h-4" />}
                 onAction={() => {}}
               />

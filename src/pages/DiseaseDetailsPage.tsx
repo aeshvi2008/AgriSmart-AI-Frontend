@@ -17,10 +17,12 @@ import { LoadingState } from '../components/common/LoadingState';
 import { ErrorState } from '../components/common/ErrorState';
 import { diseaseService } from '../services/disease';
 import { DiseaseInfo } from '../types/disease';
+import { useTranslation } from '../i18n';
 
 export const DiseaseDetailsPage: React.FC = () => {
   const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
+  const { t, getDisease, getAllDiseases, getCropName } = useTranslation();
 
   const [disease, setDisease] = useState<DiseaseInfo | null>(null);
   const [allDiseases, setAllDiseases] = useState<DiseaseInfo[]>([]);
@@ -47,19 +49,19 @@ export const DiseaseDetailsPage: React.FC = () => {
           setDisease(all[0]);
         }
       } catch (err: any) {
-        setErrorMessage(err.message || 'Failed to load disease data.');
+        setErrorMessage(err.message || t('common.error'));
       } finally {
         setIsLoading(false);
       }
     };
 
     loadData();
-  }, [classId]);
+  }, [classId, t]);
 
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <LoadingState message="Loading agricultural pathology guide..." />
+        <LoadingState message={t('common.loading')} />
       </div>
     );
   }
@@ -68,19 +70,23 @@ export const DiseaseDetailsPage: React.FC = () => {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
         <ErrorState
-          title="Disease Information Unavailable"
-          message={errorMessage || 'Unable to display disease information.'}
+          title={t('disease.notFoundTitle')}
+          message={errorMessage || t('disease.notFoundMessage')}
           onRetry={() => navigate('/disease/tomato_early_blight')}
-          retryLabel="View Tomato Early Blight"
+          retryLabel={t('disease.viewTomatoEarlyBlight')}
         />
       </div>
     );
   }
 
-  const cropsList = Array.from(new Set(allDiseases.map((d) => d.crop)));
+  // Overlay localized disease metadata
+  const localizedDisease = getDisease(disease.classId) || disease;
+  const localizedCatalog = getAllDiseases();
 
-  const filteredCatalog = allDiseases.filter((d) => {
-    const matchesCrop = selectedCropFilter === 'all' || d.crop.toLowerCase() === selectedCropFilter.toLowerCase();
+  const rawCropsList = Array.from(new Set(allDiseases.map((d) => d.crop)));
+
+  const filteredCatalog = localizedCatalog.filter((d) => {
+    const matchesCrop = selectedCropFilter === 'all' || d.crop.toLowerCase() === selectedCropFilter.toLowerCase() || allDiseases.find(orig => orig.classId === d.classId)?.crop.toLowerCase() === selectedCropFilter.toLowerCase();
     const matchesSearch =
       !searchQuery ||
       d.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,14 +97,14 @@ export const DiseaseDetailsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <PageHeader
-        title={disease.displayName}
-        subtitle={`${disease.crop} Pathology Reference • ${disease.scientificName || 'Standard Profile'}`}
+        title={localizedDisease.displayName}
+        subtitle={`${localizedDisease.crop} • ${localizedDisease.scientificName || t('disease.guideSubtitle')}`}
         showBackButton
         backTo="/dashboard"
         action={
           <Link to="/scan">
             <Button variant="primary" size="sm" icon={<Camera className="w-4 h-4" />}>
-              Diagnose a Leaf
+              {t('disease.diagnoseLeafBtn')}
             </Button>
           </Link>
         }
@@ -112,23 +118,23 @@ export const DiseaseDetailsPage: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
                 <Sprout className="w-4 h-4" />
-                Target Crop: {disease.crop}
+                {t('disease.targetCropLabel')}: {localizedDisease.crop}
               </span>
               <span
                 className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${
-                  disease.isHealthy
+                  localizedDisease.isHealthy
                     ? 'bg-emerald-100 text-emerald-800'
-                    : disease.severity === 'severe'
+                    : localizedDisease.severity === 'severe'
                     ? 'bg-rose-100 text-rose-800'
                     : 'bg-amber-100 text-amber-800'
                 }`}
               >
-                {disease.isHealthy ? 'Healthy Condition' : `${disease.severity} Severity`}
+                {localizedDisease.isHealthy ? t('disease.healthyCondition') : `${localizedDisease.severity} ${t('disease.severityLabel')}`}
               </span>
             </div>
 
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-6">
-              {disease.description}
+              {localizedDisease.description}
             </p>
 
             {/* Symptoms & Causes Grid */}
@@ -136,10 +142,10 @@ export const DiseaseDetailsPage: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Visual Symptoms
+                  {t('disease.visualSymptomsTitle')}
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
-                  {disease.symptoms.map((symptom, idx) => (
+                  {localizedDisease.symptoms.map((symptom, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
                       <span>{symptom}</span>
@@ -151,10 +157,10 @@ export const DiseaseDetailsPage: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  Causes & Spread Factors
+                  {t('disease.causesTitle')}
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
-                  {disease.causes.map((cause, idx) => (
+                  {localizedDisease.causes.map((cause, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
                       <span>{cause}</span>
@@ -168,10 +174,10 @@ export const DiseaseDetailsPage: React.FC = () => {
             <div className="mt-6 pt-6 border-t border-slate-100">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                Long-Term Field Prevention
+                {t('disease.preventionTitle')}
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
-                {disease.prevention.map((prev, idx) => (
+                {localizedDisease.prevention.map((prev, idx) => (
                   <li key={idx} className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0" />
                     <span>{prev}</span>
@@ -185,9 +191,9 @@ export const DiseaseDetailsPage: React.FC = () => {
           <div>
             <h3 className="text-lg sm:text-xl font-black text-slate-900 mb-3 flex items-center gap-2">
               <Layers className="w-5 h-5 text-emerald-600" />
-              Treatment & Control Protocols
+              {t('disease.treatmentsTitle')}
             </h3>
-            <TreatmentAccordion treatment={disease.treatment} caution={disease.caution} />
+            <TreatmentAccordion treatment={localizedDisease.treatment} caution={localizedDisease.caution} />
           </div>
         </div>
 
@@ -196,10 +202,10 @@ export const DiseaseDetailsPage: React.FC = () => {
           <Card className="p-5 border-slate-200">
             <div className="flex items-center justify-between gap-2 mb-3">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                All 28 Model 1 Classes
+                {t('disease.sidebarTitle')}
               </h3>
               <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-                {filteredCatalog.length} of 28
+                {filteredCatalog.length} {t('disease.sidebarCount')}
               </span>
             </div>
 
@@ -208,7 +214,7 @@ export const DiseaseDetailsPage: React.FC = () => {
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search disease or crop..."
+                placeholder={t('disease.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -225,9 +231,9 @@ export const DiseaseDetailsPage: React.FC = () => {
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                All
+                {t('disease.filterAll')}
               </button>
-              {cropsList.map((c) => (
+              {rawCropsList.map((c) => (
                 <button
                   key={c}
                   onClick={() => setSelectedCropFilter(c)}
@@ -237,15 +243,15 @@ export const DiseaseDetailsPage: React.FC = () => {
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  {c}
+                  {getCropName(c)}
                 </button>
               ))}
             </div>
 
-            {/* Diseases List */}
+            {/* Diseases List - Note: URL preserves exact classId */}
             <div className="space-y-1.5 max-h-[480px] overflow-y-auto pr-1">
               {filteredCatalog.map((d) => {
-                const isSelected = d.classId === disease.classId;
+                const isSelected = d.classId === localizedDisease.classId;
                 return (
                   <Link
                     key={d.classId}

@@ -3,25 +3,28 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sprout, Camera, History, HelpCircle, Info, LayoutDashboard, LogOut, User as UserIcon, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../common/Button';
+import { LanguageSelector } from '../common/LanguageSelector';
+import { useTranslation } from '../../i18n';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = isAuthenticated
     ? [
-        { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { name: 'Scan Leaf', path: '/scan', icon: <Camera className="w-4 h-4" /> },
-        { name: 'Scan History', path: '/history', icon: <History className="w-4 h-4" /> },
-        { name: 'Help Guide', path: '/help', icon: <HelpCircle className="w-4 h-4" /> },
-        { name: 'About', path: '/about', icon: <Info className="w-4 h-4" /> }
+        { name: t('nav.dashboard'), path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { name: t('nav.scanLeaf'), path: '/scan', icon: <Camera className="w-4 h-4" /> },
+        { name: t('nav.scanHistory'), path: '/history', icon: <History className="w-4 h-4" /> },
+        { name: t('nav.helpGuide'), path: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+        { name: t('nav.about'), path: '/about', icon: <Info className="w-4 h-4" /> }
       ]
     : [
-        { name: 'Home', path: '/', icon: <Sprout className="w-4 h-4" /> },
-        { name: 'How It Works', path: '/help', icon: <HelpCircle className="w-4 h-4" /> },
-        { name: 'About AgriSmart', path: '/about', icon: <Info className="w-4 h-4" /> }
+        { name: t('nav.home'), path: '/', icon: <Sprout className="w-4 h-4" /> },
+        { name: t('nav.howItWorks'), path: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+        { name: t('nav.aboutAgriSmart'), path: '/about', icon: <Info className="w-4 h-4" /> }
       ];
 
   const handleLogout = async () => {
@@ -51,7 +54,7 @@ export const Navbar: React.FC = () => {
                 AgriSmart <span className="text-emerald-600">AI</span>
               </span>
               <span className="hidden sm:block text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                Crop Health Intelligence
+                {t('common.tagline')}
               </span>
             </div>
           </Link>
@@ -74,8 +77,10 @@ export const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Desktop Right Side (Auth / User) */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Desktop Right Side (Language + Auth / User) */}
+          <div className="hidden md:flex items-center gap-2.5 lg:gap-3">
+            <LanguageSelector variant="desktop" />
+
             {isAuthenticated ? (
               <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
                 <div className="flex items-center gap-2.5 text-left">
@@ -84,7 +89,7 @@ export const Navbar: React.FC = () => {
                   </div>
                   <div className="hidden lg:block">
                     <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[130px]">
-                      {user?.name || 'Farmer'}
+                      {user?.name || t('nav.farmer')}
                     </p>
                     <p className="text-[11px] text-slate-500 truncate max-w-[130px]">
                       {user?.farmName || 'Member'}
@@ -94,8 +99,8 @@ export const Navbar: React.FC = () => {
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                  title="Log out"
-                  aria-label="Log out"
+                  title={t('nav.logout')}
+                  aria-label={t('nav.logout')}
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
@@ -104,12 +109,12 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
-                    Log In
+                    {t('nav.login')}
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button variant="primary" size="sm">
-                    Get Started Free
+                    {t('nav.register')}
                   </Button>
                 </Link>
               </div>
@@ -121,7 +126,7 @@ export const Navbar: React.FC = () => {
             {isAuthenticated && (
               <Link to="/scan">
                 <Button size="sm" variant="primary" icon={<Camera className="w-4 h-4" />}>
-                  Scan
+                  {t('common.actions') === 'Actions' ? 'Scan' : t('nav.scanLeaf').split(' ')[0]}
                 </Button>
               </Link>
             )}
@@ -167,6 +172,9 @@ export const Navbar: React.FC = () => {
             </Link>
           ))}
 
+          {/* Mobile Language Switcher inside hamburger menu */}
+          <LanguageSelector variant="mobile" />
+
           <div className="pt-3 mt-3 border-t border-slate-100">
             {isAuthenticated ? (
               <Button
@@ -179,18 +187,18 @@ export const Navbar: React.FC = () => {
                 icon={<LogOut className="w-4 h-4" />}
                 className="w-full"
               >
-                Log Out
+                {t('nav.logout')}
               </Button>
             ) : (
               <div className="flex flex-col gap-2">
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" size="md" className="w-full">
-                    Log In
+                    {t('nav.login')}
                   </Button>
                 </Link>
                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="primary" size="md" className="w-full">
-                    Register New Account
+                    {t('nav.register')}
                   </Button>
                 </Link>
               </div>

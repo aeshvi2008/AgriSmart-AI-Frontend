@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Camera, SwitchCamera, AlertCircle, X } from 'lucide-react';
 import { Button } from '../common/Button';
+import { useTranslation } from '../../i18n';
 
 interface CameraCaptureProps {
   onPhotoCaptured: (file: File) => void;
@@ -13,6 +14,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
   onCancel,
   onError
 }) => {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -115,7 +117,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
             onCancel();
           }}
           className="p-2.5 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 transition-colors"
-          aria-label="Close camera"
+          aria-label={t('common.close')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -126,7 +128,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
           aria-label="Switch camera"
         >
           <SwitchCamera className="w-4 h-4" />
-          <span>Flip Camera</span>
+          <span>{t('scan.tabCamera')}</span>
         </button>
       </div>
 
@@ -137,7 +139,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
             <AlertCircle className="w-12 h-12 mx-auto mb-3 text-rose-400" />
             <p className="text-sm font-semibold mb-4">{cameraError}</p>
             <Button variant="outline" size="sm" onClick={onCancel} className="bg-white text-slate-900">
-              Return to File Upload
+              {t('scan.tabUpload')}
             </Button>
           </div>
         ) : (

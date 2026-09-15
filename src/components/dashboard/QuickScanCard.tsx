@@ -2,8 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Camera, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '../common/Button';
+import { useTranslation } from '../../i18n';
 
 export const QuickScanCard: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 text-white p-6 sm:p-8 shadow-lg shadow-emerald-900/20">
       {/* Decorative background leaf accents */}
@@ -19,10 +22,10 @@ export const QuickScanCard: React.FC = () => {
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-2 text-white">
-          Inspect a Crop Leaf Now
+          {t('dashboard.quickScanTitle')}
         </h2>
         <p className="text-emerald-100 text-sm sm:text-base leading-relaxed mb-6">
-          Capture or upload a photo of any suspicious leaf spot. Get instant classification, certainty scoring, and recommended field treatments.
+          {t('dashboard.quickScanSubtitle')}
         </p>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -33,14 +36,14 @@ export const QuickScanCard: React.FC = () => {
               icon={<Camera className="w-5 h-5 text-emerald-800" />}
               className="bg-white hover:bg-emerald-50 text-emerald-900 font-bold shadow-md"
             >
-              Scan a Leaf
+              {t('dashboard.quickScanBtn')}
             </Button>
           </Link>
           <Link
             to="/help"
             className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold text-emerald-100 hover:text-white hover:bg-emerald-700/50 transition-colors"
           >
-            <span>Photo Taking Guide</span>
+            <span>{t('nav.helpGuide')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -4,13 +4,16 @@ import { PageHeader } from '../components/common/PageHeader';
 import { Card } from '../components/common/Card';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common/Button';
+import { useTranslation } from '../i18n';
 
 export const AboutPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <PageHeader
-        title="About AgriSmart AI"
-        subtitle="Empowering growers with accessible computer-vision crop pathology"
+        title={t('about.pageTitle')}
+        subtitle={t('about.pageSubtitle')}
         showBackButton
         backTo="/"
       />
@@ -21,7 +24,7 @@ export const AboutPage: React.FC = () => {
           <Sprout className="w-7 h-7" />
         </div>
         <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-3">
-          Our Purpose: Accessible Crop Protection
+          {t('about.purposeTitle')}
         </h2>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">
           Plant diseases account for up to 40% of global crop losses annually, jeopardizing food security and smallholder farmer livelihoods. Often, by the time symptoms become obvious to untrained eyes, fungal and bacterial infections have already spread across the field.
@@ -38,14 +41,14 @@ export const AboutPage: React.FC = () => {
             <Cpu className="w-5 h-5" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-2">
-            Model 1: EfficientNet-B2
+            {t('about.model1Title')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-            Our current vision engine employs an EfficientNet-B2 backbone fine-tuned for high accuracy on foliar pathology datasets. It maps across 28 discrete disease and healthy crop classes with lightweight computational overhead.
+            {t('about.model1Desc')}
           </p>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
             <ShieldCheck className="w-4 h-4" />
-            <span>FastAPI service ready architecture</span>
+            <span>{t('about.model1Badge')}</span>
           </div>
         </Card>
 
@@ -54,14 +57,14 @@ export const AboutPage: React.FC = () => {
             <Layers className="w-5 h-5" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-2">
-            Independent Recommendation Layer
+            {t('about.recommendationTitle')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-            We intentionally decouple ML classification from agronomic advice. Recommendations are curated based on recognized university extension pathology guides, providing distinct cultural, organic, and chemical options.
+            {t('about.recommendationDesc')}
           </p>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-700">
             <BookOpen className="w-4 h-4" />
-            <span>Standardized extension guidelines</span>
+            <span>{t('about.recommendationBadge')}</span>
           </div>
         </Card>
       </section>
@@ -71,9 +74,9 @@ export const AboutPage: React.FC = () => {
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-1" />
           <div>
-            <h3 className="text-base font-bold mb-1">Ethical AI & Agronomic Decision Support</h3>
+            <h3 className="text-base font-bold mb-1">{t('about.disclaimerTitle')}</h3>
             <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
-              AgriSmart AI is designed as decision support, not an autonomous pesticide prescription system. Microclimates, soil chemistry, and secondary pests can influence plant presentation. Farmers are always strongly advised to verify diagnosis with certified agricultural extension specialists before applying regulated chemical agents.
+              {t('about.disclaimerDesc')}
             </p>
           </div>
         </div>
@@ -83,7 +86,7 @@ export const AboutPage: React.FC = () => {
       <div className="text-center">
         <Link to="/scan">
           <Button variant="primary" size="lg">
-            Try Leaf Diagnosis Now
+            {t('nav.scanLeaf')}
           </Button>
         </Link>
       </div>

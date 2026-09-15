@@ -17,25 +17,24 @@ import { LowConfidenceAlert } from '../components/prediction/LowConfidenceAlert'
 import { LoadingState } from '../components/common/LoadingState';
 import { ErrorState } from '../components/common/ErrorState';
 import { predictionService } from '../services/prediction';
-import { diseaseService } from '../services/disease';
 import { PredictionResult } from '../types/prediction';
-import { DiseaseInfo } from '../types/disease';
 import { useToast } from '../context/ToastContext';
+import { useTranslation } from '../i18n';
 
 export const ResultPage: React.FC = () => {
   const { predictionId } = useParams<{ predictionId: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t, getDisease, getCropName } = useTranslation();
 
   const [result, setResult] = useState<PredictionResult | null>(null);
-  const [_diseaseDetails, setDiseaseDetails] = useState<DiseaseInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPrediction = async () => {
       if (!predictionId) {
-        setErrorMessage('No prediction ID provided.');
+        setErrorMessage(t('result.notFoundMessage'));
         setIsLoading(false);
         return;
       }
@@ -43,25 +42,19 @@ export const ResultPage: React.FC = () => {
       try {
         const pred = await predictionService.getPredictionById(predictionId);
         if (!pred) {
-          setErrorMessage('Could not locate this diagnosis record. It may have expired or been deleted.');
+          setErrorMessage(t('result.notFoundMessage'));
           return;
         }
         setResult(pred);
-
-        // Fetch disease profile for detailed guide link
-        if (pred.disease.classId) {
-          const disease = await diseaseService.getDiseaseById(pred.disease.classId);
-          setDiseaseDetails(disease);
-        }
       } catch (err: any) {
-        setErrorMessage(err.message || 'Error loading diagnosis results.');
+        setErrorMessage(err.message || t('common.error'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPrediction();
-  }, [predictionId]);
+  }, [predictionId, t]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -72,14 +65,14 @@ export const ResultPage: React.FC = () => {
       }).catch(() => {});
     } else {
       navigator.clipboard.writeText(window.location.href);
-      showToast('Report link copied to clipboard!', 'info');
+      showToast(t('result.shareToast'), 'info');
     }
   };
 
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <LoadingState message="Retrieving crop diagnosis..." />
+        <LoadingState message={t('common.loading')} />
       </div>
     );
   }
@@ -88,10 +81,10 @@ export const ResultPage: React.FC = () => {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
         <ErrorState
-          title="Diagnosis Not Found"
-          message={errorMessage || 'Unable to retrieve prediction result.'}
+          title={t('result.notFoundTitle')}
+          message={errorMessage || t('result.notFoundMessage')}
           onRetry={() => navigate('/scan')}
-          retryLabel="Perform a New Scan"
+          retryLabel={t('result.newScanBtn')}
         />
       </div>
     );
@@ -100,11 +93,30 @@ export const ResultPage: React.FC = () => {
   const isLowConfidence = result.confidenceLevel === 'low';
   const isHealthy = result.disease.isHealthy;
 
+  // Localized disease mapping based on classId
+  const localizedDisease = result.disease.classId ? getDisease(result.disease.classId) : null;
+  const localizedName = localizedDisease
+    ? (isLowConfidence
+        ? `${t('common.uncertain')}: ${localizedDisease.displayName}`
+        : localizedDisease.displayName)
+    : result.disease.name;
+  const localizedCrop = localizedDisease?.crop || getCropName(result.crop);
+
+  // Localized action recommendations
+  const localizedActions = localizedDisease
+    ? isHealthy
+      ? [localizedDisease.prevention[0] || 'Maintain consistent drip irrigation.', 'Inspect underside of foliage weekly.']
+      : [
+          ...(localizedDisease.treatment.cultural.slice(0, 2)),
+          ...(localizedDisease.treatment.organic.slice(0, 1))
+        ]
+    : result.recommendation.actions;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <PageHeader
-        title="Diagnostic Report"
-        subtitle={`Analyzed ${new Date(result.createdAt).toLocaleString()} • ${result.modelName || 'Model 1'}`}
+        title={t('result.pageTitle')}
+        subtitle={`${t('result.analyzedOn')} ${new Date(result.createdAt).toLocaleString()} • ${result.modelName || t('result.modelBadge')}`}
         showBackButton
         backTo="/dashboard"
         action={
@@ -115,7 +127,7 @@ export const ResultPage: React.FC = () => {
               icon={<Share2 className="w-4 h-4" />}
               onClick={handleShare}
             >
-              Share Report
+              {t('result.shareBtn')}
             </Button>
             <Link to="/scan">
               <Button
@@ -123,7 +135,7 @@ export const ResultPage: React.FC = () => {
                 size="sm"
                 icon={<Camera className="w-4 h-4" />}
               >
-                Scan Another
+                {t('result.scanAnotherBtn')}
               </Button>
             </Link>
           </div>
@@ -167,49 +179,51 @@ export const ResultPage: React.FC = () => {
             {/* Top Badges */}
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200">
-                Crop: {result.crop}
+                {t('result.cropLabel')}: {localizedCrop}
               </span>
               <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400">
                 <Cpu className="w-3.5 h-3.5 text-slate-400" />
-                EfficientNet-B2
+                {result.modelName || 'EfficientNet-B2'}
               </span>
             </div>
 
             {/* Disease Heading */}
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-1">
-              {result.disease.name}
+              {localizedName}
             </h2>
-            {result.disease.scientificName && (
+            {(localizedDisease?.scientificName || result.disease.scientificName) && (
               <p className="text-sm italic text-slate-500 font-serif mb-4">
-                Pathogen: {result.disease.scientificName}
+                {t('result.pathogenLabel')}: {localizedDisease?.scientificName || result.disease.scientificName}
               </p>
             )}
 
-            {/* AI Explanation */}
+            {/* AI Explanation / Description */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed mb-6">
-              <strong className="font-bold text-slate-900 block mb-1">Observation Summary:</strong>
-              {result.explanation}
+              <strong className="font-bold text-slate-900 block mb-1">
+                {t('result.observationSummaryTitle')}:
+              </strong>
+              {localizedDisease ? localizedDisease.description : result.explanation}
             </div>
 
             {/* Recommended Next Actions */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                  Recommended Immediate Steps
+                  {t('result.recommendedActionsTitle')}
                 </h3>
                 {isHealthy ? (
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
-                    Routine Care
+                    {t('result.routineCareBadge')}
                   </span>
                 ) : (
                   <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">
-                    Mitigation Plan
+                    {t('result.mitigationPlanBadge')}
                   </span>
                 )}
               </div>
 
               <div className="space-y-2.5">
-                {result.recommendation.actions.map((action, idx) => (
+                {localizedActions.map((action, idx) => (
                   <div
                     key={idx}
                     className="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-100 text-xs sm:text-sm text-slate-800"
@@ -234,7 +248,7 @@ export const ResultPage: React.FC = () => {
                     icon={<BookOpen className="w-4 h-4" />}
                     className="w-full font-bold"
                   >
-                    Explore Disease Guide & Treatments
+                    {t('result.exploreGuideBtn')}
                   </Button>
                 </Link>
               )}
@@ -246,7 +260,7 @@ export const ResultPage: React.FC = () => {
                   icon={<Camera className="w-4 h-4" />}
                   className="w-full"
                 >
-                  Scan Another Leaf
+                  {t('result.scanAnotherBottomBtn')}
                 </Button>
               </Link>
             </div>
